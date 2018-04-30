@@ -20,6 +20,10 @@ namespace Reliv\WhiteRat;
  * If a string appears as a key, and the value is an array, this indicates
  * a more specific whitelist rule for sub-keys of the associated config
  * item. Whitelisting rules then proceed recursively.
+ * 
+ * It is also possible to whitelist indexed arrays. To do this, create an array
+ * within in array, where the sub-array is the only child of its parent and is
+ * an indexed child. This looks like "double brackets," like [['this']].
  *
  * By default, all fields are NOT whitelisted, and no config will be
  * encoded to JSON.
@@ -31,14 +35,12 @@ namespace Reliv\WhiteRat;
  *      'bar' => true,
  *      'baz' => [
  *          'flip' => true,
- *          'flop' => [
- *              ...
- *          ],
+ *          'flop' => [ ['flummox'] ],
  *          'quux',
  *      ]
  * ]);
  *
- * $result = $whitelist([ ...]);
+ * $result = $whitelist([ ... ]);
  * @package Reliv\WhiteRat
  */
 class Whitelist
