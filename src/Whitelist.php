@@ -23,7 +23,13 @@ namespace Reliv\WhiteRat;
  * 
  * It is also possible to whitelist indexed arrays. To do this, create an array
  * within in array, where the sub-array is the only child of its parent and is
- * an indexed child. This looks like "double brackets," like [['this']].
+ * an indexed child. This looks like a set of double brackets, and we refer to
+ * it as the "double-array."
+ *
+ * Whitelist rules are validated upon construction of the whitelist. An
+ * exception of type Reliv\WhiteRat\WhitelistValidationException will be thrown
+ * if there are any problems detected in the rules given, and the path to the
+ * rule and an explanation of the error will be provided.
  *
  * By default, all fields are NOT whitelisted, and no config will be
  * encoded to JSON.
@@ -48,38 +54,37 @@ class Whitelist
     /**
      * @var array
      */
-    protected $whitelist;
+    protected $rules;
 
     /**
      * Whitelist constructor.
-     * @param array $whitelist
+     * @param array $rules
      * @throws StructureException
      */
-    public function __construct(array $whitelist) {
-        $this->validateWhitelist($whitelist, []);
-        $this->whitelist = $whitelist;
+    public function __construct(array $rules) {
+        $this->validateWhitelist($rules, []);
+        $this->rules = $rules;
     }
 
     /**
-     * @param array $whitelist
+     * @param array $rules
      * @param array $keyPath
      * @throws StructureException
      */
-    private function validateWhitelist(array $whitelist, array $keyPath)
+    private function validateWhitelist(array $rules, array $keyPath)
     {
-        foreach ($whitelist as $key => $rule) {
+        foreach ($rules as $key => $rule) {
             if (is_int($key)) {
                 if (is_array($rule)) {
-                    if (count($whitelist) > 1) {
-                        $m = "$path: Only one item is allowed when it is indexed and is an array";
-                        throw new StructureException($m);
+                    if (count($rules) > 1) {
+                        $path = implode(' => ', $keyPath);
+                        throw new StructureException("$path: Improper double-array");
                     }
                     $this->validateWhitelist($rule, array_merge($keyPath, ['[#]']));
                     continue;
                 } elseif (!is_string($rule)) {
                     $path = implode(' => ', $keyPath);
-                    $m = "$path: Indexed values after [0] must be strings";
-                    throw new StructureException($m);
+                    throw new StructureException("$path: Indexed values after [0] must be strings");
                 }
                 $key = $rule;
             } elseif (is_array($rule)) {
@@ -97,19 +102,19 @@ class Whitelist
      */
     public function filter(array $subject) : array
     {
-        return $this->filterRecurse($this->whitelist, $subject);
+        return $this->filterRecurse($this->rules, $subject);
     }
 
     /**
-     * @param array $whitelist
+     * @param array $rules
      * @param array $subject
      * @param array $keyPath
      * @return array
      */
-    private function filterRecurse(array $whitelist, array $subject) : array
+    private function filterRecurse(array $rules, array $subject) : array
     {
         $filteredSubject = [];
-        foreach ($whitelist as $key => $rule) {
+        foreach ($rules as $key => $rule) {
             if (is_int($key)) {
                 if (is_array($rule)) {
                     foreach ($subject as $childVal) {

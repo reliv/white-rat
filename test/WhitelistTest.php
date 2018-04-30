@@ -3,7 +3,7 @@
 namespace Reliv\WhiteRat\Tests;
 
 require_once __DIR__ . '/../src/Whitelist.php';
-require_once __DIR__ . '/../src/StructureException.php';
+require_once __DIR__ . '/../src/WhitelistValidationException.php';
 
 use PHPUnit\Framework\TestCase;
 use Reliv\WhiteRat\Whitelist;
