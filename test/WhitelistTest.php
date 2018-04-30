@@ -10,6 +10,8 @@ use Reliv\WhiteRat\Whitelist;
 
 class WhitelistTest extends TestCase
 {
+    // todo: Add tests for each possible exception during validation
+
     public function testAllFilters()
     {
         $whitelist = new Whitelist([
