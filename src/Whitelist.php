@@ -110,12 +110,10 @@ class Whitelist
         foreach ($whitelist as $key => $rule) {
             if (is_int($key)) {
                 if (is_array($rule)) {
-                    $filteredSubjectChild = [];
                     foreach ($subject as $childVal) {
-                        $filteredSubjectChild[] =
+                        $filteredSubject[] =
                             $this->filterRecurse($rule, $childVal);
                     }
-                    $filteredSubject[] = $filteredSubjectChild;
                     continue;
                 }
                 $key = $rule;
