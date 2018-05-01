@@ -7,10 +7,45 @@ require_once __DIR__ . '/../src/WhitelistValidationException.php';
 
 use PHPUnit\Framework\TestCase;
 use Reliv\WhiteRat\Whitelist;
+use Reliv\WhiteRat\WhitelistValidationException;
 
 class WhitelistTest extends TestCase
 {
-    // todo: Add tests for each possible exception during validation
+    public function testValidateFirstIndexedValueType()
+    {
+        $this->expectExceptionObject(new WhitelistValidationException(
+            '[(root)] => [0]: First indexed value must be string or array'
+        ));
+
+        new Whitelist([ 2 ]);
+    }
+
+    public function testValidateOtherIndexedValueTypes()
+    {
+        $this->expectExceptionObject(new WhitelistValidationException(
+            '[(root)] => [1]: Indexed values after [0] must be strings'
+        ));
+
+        new Whitelist([ 'a', 2 ]);
+    }
+
+    public function testValidateKeyedValueTypes()
+    {
+        $this->expectExceptionObject(new WhitelistValidationException(
+            '[(root)] => [a]: Keyed values must be string, bool, or array'
+        ));
+
+        new Whitelist([ 'a' => 2 ]);
+    }
+
+    public function testValidateDoubleArray()
+    {
+        $this->expectExceptionObject(new WhitelistValidationException(
+            '[(root)] => [0]: Double-array should have exactly one child'
+        ));
+
+        new Whitelist([['a'], 'b' ]);
+    }
 
     public function testAllFilters()
     {
@@ -29,14 +64,14 @@ class WhitelistTest extends TestCase
 
         $subject = [
             'a' => 'A',
-            'b' => ['b', 'B'],
-            'c' => ['c', 'C'],
+            'b' => ['b', 111],
+            'c' => [222, 'C'],
             'd' => [
                 'f' => [
                     'g' => 'G',
                     'h' => 'H',
                 ],
-                'i' => 'I'
+                'i' => 333
             ],
             'j' => [
                 ['k' => 'K1', 'l' => 'L1'],
@@ -47,12 +82,12 @@ class WhitelistTest extends TestCase
 
         $expectedResult = [
             'a' => 'A',
-            'b' => ['b', 'B'],
+            'b' => ['b', 111],
             'd' => [
                 'f' => [
                     'h' => 'H',
                 ],
-                'i' => 'I'
+                'i' => 333
             ],
             'j' => [
                 ['l' => 'L1'],

@@ -45,8 +45,8 @@ namespace Reliv\WhiteRat;
  *          'quux',
  *      ]
  * ]);
+ * $result = $whitelist->filter([ ... ]);
  *
- * $result = $whitelist([ ... ]);
  * @package Reliv\WhiteRat
  */
 class Whitelist
@@ -58,40 +58,41 @@ class Whitelist
 
     /**
      * Whitelist constructor.
-     * @param array $rules
-     * @throws StructureException
+     * @param array $rules See class docs for format instructions.
+     * @throws WhitelistValidationException
      */
     public function __construct(array $rules) {
-        $this->validateWhitelist($rules, []);
+        $this->validateRules($rules, ['(root)']);
         $this->rules = $rules;
     }
 
     /**
      * @param array $rules
      * @param array $keyPath
-     * @throws StructureException
+     * @throws WhitelistValidationException
      */
-    private function validateWhitelist(array $rules, array $keyPath)
+    private function validateRules(array $rules, array $keyPath)
     {
         foreach ($rules as $key => $rule) {
+            $path = ('[' . implode('] => [', array_merge($keyPath, [$key])) . ']');
             if (is_int($key)) {
                 if (is_array($rule)) {
                     if (count($rules) > 1) {
-                        $path = implode(' => ', $keyPath);
-                        throw new StructureException("$path: Improper double-array");
+                        throw new WhitelistValidationException("$path: Double-array should have exactly one child");
                     }
-                    $this->validateWhitelist($rule, array_merge($keyPath, ['[#]']));
+                    $this->validateRules($rule, array_merge($keyPath, ['[#]']));
                     continue;
                 } elseif (!is_string($rule)) {
-                    $path = implode(' => ', $keyPath);
-                    throw new StructureException("$path: Indexed values after [0] must be strings");
+                    $m = ($key == 0) ?
+                        "$path: First indexed value must be string or array" :
+                        "$path: Indexed values after [0] must be strings";
+                    throw new WhitelistValidationException($m);
                 }
                 $key = $rule;
             } elseif (is_array($rule)) {
-                $this->validateWhitelist($rule, array_merge($keyPath, [$key]));
+                $this->validateRules($rule, array_merge($keyPath, [$key]));
             } elseif (!is_string($rule) && !is_bool($rule)) {
-                $path = implode(' => ', array_merge($keyPath, [$key]));
-                throw new StructureException("$path: Keyed values must be string, bool, or array");
+                throw new WhitelistValidationException("$path: Keyed values must be string, bool, or array");
             }
         }
     }
