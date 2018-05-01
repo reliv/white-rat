@@ -100,4 +100,10 @@ class WhitelistTest extends TestCase
 
         $this->assertEquals($expectedResult, $actualResult);
     }
+
+    public function testGetsRules()
+    {
+        $whitelist = new Whitelist(['the' => 'rule']);
+        $this->assertEquals(['the' => 'rule'], $whitelist->getRules());
+    }
 }

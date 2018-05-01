@@ -25,6 +25,15 @@ class Whitelist
     }
 
     /**
+     * Return the rules array that was given to the whitelist at construction.
+     * @return array
+     */
+    public function getRules()
+    {
+        return $this->rules;
+    }
+
+    /**
      * @param array $rules
      * @param array $keyPath
      * @throws WhitelistValidationException
