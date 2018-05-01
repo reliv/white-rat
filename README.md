@@ -23,13 +23,13 @@ $filteredSubject = $whitelist->filter($subject);
 
 ## Whitelist Rules
 
-Whitelist rule sets are designed to closely mirror the structure of the data they are applied to. A rule set takes the form of an array that is a mix of associative and indexed values, although the order of indexed values is irrelevant. When a value is indexed, it must be a string. When it is associative, it must be either an array or a boolean. Each string, whether it is a key or a value, correlates with a key in the block config.
+Whitelist rule sets are designed to closely mirror the structure of the data they are applied to. A rule set takes the form of an array that is a mix of associative and indexed values, although the order of indexed values is irrelevant. When a value is indexed, it must be a string. When it is associative, it must be either an array or a boolean. Each string, whether it is a key or a value, correlates with a key in the data.
 
-If a string appears as an indexed value, the correlating key in the block config, including all fields below it, are whitelisted.
+If a string appears as an indexed value, the correlating key in the data, including all fields below it, are whitelisted.
 
-If a string appears as a key, and the value is a boolean, it indicates whether the associated config is whitelisted or not.
+If a string appears as a key, and the value is a boolean, it indicates whether the associated data is whitelisted or not.
 
-If a string appears as a key, and the value is an array, this indicates a more specific whitelist rule for sub-keys of the associated config item. Whitelisting rules then proceed recursively.
+If a string appears as a key, and the value is an array, this indicates a more specific whitelist rule for sub-keys of the associated data. Whitelisting rules then proceed recursively.
  
 It is also possible to whitelist indexed arrays. To do this, create an array within in array, where the sub-array is the only child of its parent and is an indexed child. This looks like a set of double brackets, and we refer to it as the "double-array."
 
