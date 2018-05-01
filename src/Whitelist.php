@@ -74,25 +74,25 @@ class Whitelist
     private function validateRules(array $rules, array $keyPath)
     {
         foreach ($rules as $key => $rule) {
-            $path = ('[' . implode('] => [', array_merge($keyPath, [$key])) . ']');
+            $pathStr = ('[' . implode('] => [', array_merge($keyPath, [$key])) . ']');
             if (is_int($key)) {
                 if (is_array($rule)) {
                     if (count($rules) > 1) {
-                        throw new WhitelistValidationException("$path: Double-array should have exactly one child");
+                        throw new WhitelistValidationException("$pathStr: Double-array should have exactly one child");
                     }
                     $this->validateRules($rule, array_merge($keyPath, ['[#]']));
                     continue;
                 } elseif (!is_string($rule)) {
-                    $m = ($key == 0) ?
-                        "$path: First indexed value must be string or array" :
-                        "$path: Indexed values after [0] must be strings";
-                    throw new WhitelistValidationException($m);
+                    throw new WhitelistValidationException(($key == 0) ?
+                        "$pathStr: First indexed value must be string or array" :
+                        "$pathStr: Indexed values after [0] must be strings"
+                    );
                 }
                 $key = $rule;
             } elseif (is_array($rule)) {
                 $this->validateRules($rule, array_merge($keyPath, [$key]));
             } elseif (!is_string($rule) && !is_bool($rule)) {
-                throw new WhitelistValidationException("$path: Keyed values must be string, bool, or array");
+                throw new WhitelistValidationException("$pathStr: Keyed values must be string, bool, or array");
             }
         }
     }
