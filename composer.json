@@ -1,0 +1,26 @@
+{
+    "name": "reliv/white-rat",
+    "description": "A whitelisting library for PHP that supports deep arrays",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^6"
+    },
+    "minimum-stability": "stable",
+    "license": "ISC",
+    "homepage": "https://github.com/reliv/white-rat",
+    "authors": [
+        {
+            "name": "Brad Harms",
+            "email": "brad.k.harms@gmail.com",
+            "homepage": "https://github.com/bradharms"
+        }
+    ],
+    "require": {
+        "php": ">=7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Reliv\\WhiteRat\\": "/src"
+        }
+    }
+}
