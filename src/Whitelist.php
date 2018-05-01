@@ -5,48 +5,6 @@ namespace Reliv\WhiteRat;
 /**
  * Filter that will remove non-whitelisted values from a subject.
  *
- * The array is a mix of associative and indexed values, although the
- * order of indexed values is irrelevant. When a value is indexed, it must
- * be a string. When it is associative, it must be either an array or a
- * boolean. Each string, whether it is a key or a value, correlates with a
- * key in the block config.
- *
- * If a string appears as an indexed value, the correlating key in the block
- * config, including all fields below it, are whitelisted.
- *
- * If a string appears as a key, and the value is a boolean, it indicates
- * whether the associated config is whitelisted or not.
- *
- * If a string appears as a key, and the value is an array, this indicates
- * a more specific whitelist rule for sub-keys of the associated config
- * item. Whitelisting rules then proceed recursively.
- * 
- * It is also possible to whitelist indexed arrays. To do this, create an array
- * within in array, where the sub-array is the only child of its parent and is
- * an indexed child. This looks like a set of double brackets, and we refer to
- * it as the "double-array."
- *
- * Whitelist rules are validated upon construction of the whitelist. An
- * exception of type Reliv\WhiteRat\WhitelistValidationException will be thrown
- * if there are any problems detected in the rules given, and the path to the
- * rule and an explanation of the error will be provided.
- *
- * By default, all fields are NOT whitelisted, and no config will be
- * encoded to JSON.
- *
- * @example
- *
- * $whitelist = new Whitelist([
- *      'foo',
- *      'bar' => true,
- *      'baz' => [
- *          'flip' => true,
- *          'flop' => [ ['flummox'] ],
- *          'quux',
- *      ]
- * ]);
- * $result = $whitelist->filter([ ... ]);
- *
  * @package Reliv\WhiteRat
  */
 class Whitelist
@@ -58,7 +16,7 @@ class Whitelist
 
     /**
      * Whitelist constructor.
-     * @param array $rules See class docs for format instructions.
+     * @param array $rules See README.md for format
      * @throws WhitelistValidationException
      */
     public function __construct(array $rules) {
