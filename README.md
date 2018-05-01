@@ -66,24 +66,24 @@ $data = [
 
 $result = $whitelist->filter($data);
 
-var_dump($data);
+var_dump($result);
 ```
 
 Output:
 ```text
 array(3) {
-  ["foo"] => "FOO!"
-  ["bar"] => "BAR!"
-  ["baz"] => array(2) {
-      ["flip"] => "FLIP!"
-      ["flop"] => array(2) => {
-          array(1) => {
-              ["flummox"] => int(222)
-          }
-          array(1) => {
-              ["flummox"] => int(333)
-          }
-      }
-  }
+    ["foo"] => "FOO!"
+    ["bar"] => "BAR!"
+    ["baz"] => array(2) {
+        ["flip"] => "FLIP!"
+        ["flop"] => array(2) => {
+            array(1) => {
+                ["flummox"] => int(222)
+            }
+            array(1) => {
+                ["flummox"] => int(333)
+            }
+        }
+    }
 }
 ```
