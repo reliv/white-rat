@@ -16,7 +16,8 @@
         }
     ],
     "require": {
-        "php": ">=7"
+        "php": ">=7",
+        "reliv/zf-config-factories": "3.* || 4.*"
     },
     "autoload": {
         "psr-4": {

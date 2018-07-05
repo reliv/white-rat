@@ -2,23 +2,30 @@
 
 namespace Reliv\WhiteRat\Tests;
 
-require_once __DIR__ . '/../src/Whitelist.php';
+require_once __DIR__ . '/../src/Filter.php';
 require_once __DIR__ . '/../src/WhitelistValidationException.php';
 
 use PHPUnit\Framework\TestCase;
-use Reliv\WhiteRat\Whitelist;
+use Reliv\WhiteRat\Filter;
 use Reliv\WhiteRat\WhitelistValidationException;
-use Mockery as m;
 
-class WhitelistTest extends TestCase
+class FilterTest extends TestCase
 {
+    /** @var Filter */
+    public $filter;
+
+    public function setUp()
+    {
+        $this->filter = new Filter();
+    }
+
     public function testValidateFirstIndexedValueType()
     {
         $this->expectExceptionObject(new WhitelistValidationException(
             '[(root)] => [0]: First indexed value must be string or array'
         ));
 
-        new Whitelist([ 2 ]);
+        $this->filter->validate([ 2 ]);
     }
 
     public function testValidateOtherIndexedValueTypes()
@@ -27,7 +34,7 @@ class WhitelistTest extends TestCase
             '[(root)] => [1]: Indexed values after [0] must be strings'
         ));
 
-        new Whitelist([ 'a', 2 ]);
+        $this->filter->validate([ 'a', 2 ]);
     }
 
     public function testValidateKeyedValueTypes()
@@ -36,7 +43,7 @@ class WhitelistTest extends TestCase
             '[(root)] => [a]: Keyed values must be string, bool, or array'
         ));
 
-        new Whitelist([ 'a' => 2 ]);
+        $this->filter->validate([ 'a' => 2 ]);
     }
 
     public function testValidateDoubleArray()
@@ -45,12 +52,12 @@ class WhitelistTest extends TestCase
             '[(root)] => [0]: Double-array should have exactly one child'
         ));
 
-        new Whitelist([['a'], 'b' ]);
+        $this->filter->validate([['a'], 'b' ]);
     }
 
     public function testAllFilters()
     {
-        $whitelist = new Whitelist([
+        $rules = [
             'a',
             'b' => true,
             'c' => false,
@@ -61,7 +68,7 @@ class WhitelistTest extends TestCase
             ],
             'j' => [[ 'l' ]],
             'm'
-        ]);
+        ];
 
         $subject = [
             'a' => 'A',
@@ -97,7 +104,7 @@ class WhitelistTest extends TestCase
             'm' => 'M'
         ];
 
-        $actualResult = $whitelist($subject);
+        $actualResult = $this->filter->__invoke($subject, $rules);
 
         $this->assertEquals($expectedResult, $actualResult);
     }
