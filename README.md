@@ -9,16 +9,36 @@ composer require reliv/white-rat
 
 ## Use
 
+To use as a stateless service:
+
+```php
+use Reliv\WhiteRat\Filter;
+
+$filter = new Filter();
+
+$rules = /* White-list rules go here; see further explanation below */;
+
+// Optional safety check; throws an exception if $rules is not valid
+$filter->validate($rules);
+
+$subject = [/* Data to be filtered */];
+
+$filteredSubject = $filter($subject, $rules);
+```
+
+To pre-compile a reusable filter as an invokable whitelist:
+
 ```php
 use Reliv\WhiteRat\Whitelist;
 
 $whitelist = new Whitelist([
     /* White-list rules go here; see further explanation below */
+    /* The rules will be validated upon construction */
 ]);
 
 $subject = [/* Data to be filtered */];
 
-$filteredSubject = $whitelist->filter($subject);
+$filteredSubject = $whitelist($subject);
 ```
 
 ## Whitelist Rules
@@ -64,7 +84,7 @@ $data = [
     ]
 ]
 
-$result = $whitelist->filter($data);
+$result = $whitelist($data);
 
 var_dump($result);
 ```
